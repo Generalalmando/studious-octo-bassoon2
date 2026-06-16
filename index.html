@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nota Verde - Colegio Miraflores</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: #1a1a1a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .viewer {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slide {
+            display: none;
+            width: 100%;
+            height: 100%;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        .slide img {
+            max-width: 100%;
+            max-height: 100vh;
+            object-fit: contain;
+            display: block;
+        }
+
+        .nav-btn {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.15);
+            border: none;
+            color: white;
+            font-size: 28px;
+            width: 48px;
+            height: 80px;
+            border-radius: 8px;
+            cursor: pointer;
+            z-index: 10;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-btn:hover { background: rgba(255,255,255,0.35); }
+        .nav-btn.prev { left: 8px; }
+        .nav-btn.next { right: 8px; }
+
+        .counter {
+            position: fixed;
+            bottom: 14px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255,255,255,0.5);
+            font-family: sans-serif;
+            font-size: 13px;
+            letter-spacing: 1px;
+            user-select: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="viewer" id="viewer">
+    <div class="slide active"><img src="images/page1.png" alt="Página 1"></div>
+    <div class="slide"><img src="images/page2.png" alt="Página 2"></div>
+    <div class="slide"><img src="images/page3.png" alt="Página 3"></div>
+    <div class="slide"><img src="images/page4.png" alt="Página 4"></div>
+    <div class="slide"><img src="images/page5.png" alt="Página 5"></div>
+    <div class="slide"><img src="images/page6.png" alt="Página 6"></div>
+    <div class="slide"><img src="images/page7.png" alt="Página 7"></div>
+    <div class="slide"><img src="images/page8.png" alt="Página 8"></div>
+    <div class="slide"><img src="images/page9.png" alt="Página 9"></div>
+</div>
+
+<button class="nav-btn prev" id="prev">&#8249;</button>
+<button class="nav-btn next" id="next">&#8250;</button>
+<div class="counter" id="counter">1 / 9</div>
+
+<script>
+    const slides = document.querySelectorAll('.slide');
+    const total = slides.length;
+    let current = 0;
+
+    function goTo(n) {
+        slides[current].classList.remove('active');
+        current = (n + total) % total;
+        slides[current].classList.add('active');
+        document.getElementById('counter').textContent = (current + 1) + ' / ' + total;
+    }
+
+    document.getElementById('prev').addEventListener('click', () => goTo(current - 1));
+    document.getElementById('next').addEventListener('click', () => goTo(current + 1));
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goTo(current + 1);
+        if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   goTo(current - 1);
+    });
+
+    let touchX = 0;
+    document.getElementById('viewer').addEventListener('touchstart', e => touchX = e.changedTouches[0].screenX);
+    document.getElementById('viewer').addEventListener('touchend', e => {
+        const dx = e.changedTouches[0].screenX - touchX;
+        if (dx < -50) goTo(current + 1);
+        if (dx >  50) goTo(current - 1);
+    });
+</script>
+</body>
+</html>
